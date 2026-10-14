@@ -1,0 +1,22 @@
+name: Sync reverse-skill upstream
+on:
+  schedule:
+    - cron: '33 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: reverse-skill-upstream-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.repository == 'fastcarv88-droid/reverse-skill'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Merge upstream without forcing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api --method POST "repos/$REPO/merge-upstream" -f branch=main
